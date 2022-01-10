@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<fx:root dividerPositions="0.5" type="SplitPane" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+   <items>
+      <VBox>
+         <children>
+            <VBox>
+               <children>
+                  <HBox>
+                     <children>
+                        <Button fx:id="floatButton" mnemonicParsing="false" text="Float" />
+                        <Button fx:id="intButton" mnemonicParsing="false" text="Int" />
+                        <Button fx:id="stringButton" mnemonicParsing="false" text="String" />
+                        <Button fx:id="inputImageButton" mnemonicParsing="false" text="Image from file" />
+                        <Button fx:id="addTextButton" mnemonicParsing="false" text="Add text" />
+                        <Button fx:id="addImageButton" mnemonicParsing="false" text="Add image" />
+                        <Button fx:id="brightnessButton" mnemonicParsing="false" text="Brightness" />
+                        <Button fx:id="grayFilterButton" mnemonicParsing="false" text="Gray filter" />
+                     </children>
+                  </HBox>
+                  <HBox>
+                     <children>
+                        <Button fx:id="sepiaFilterButton" mnemonicParsing="false" text="Sepia filter" />
+                        <Button fx:id="invertFilterButton" mnemonicParsing="false" text="Invert filter" />
+                        <Button fx:id="blurFilterButton" mnemonicParsing="false" text="Blur filter" />
+                        <Button fx:id="transformMoveButton" mnemonicParsing="false" text="Transform move" />
+                        <Button fx:id="transformScaleButton" mnemonicParsing="false" text="Transform scale" />
+                        <Button fx:id="transformRotateButton" mnemonicParsing="false" text="Transform rotate" />
+                        <Button fx:id="saveImageButton" mnemonicParsing="false" text="Save end point image" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+            <ScrollPane fitToHeight="true" fitToWidth="true" minViewportHeight="100.0" minViewportWidth="100.0" prefViewportHeight="100.0" prefViewportWidth="100.0" VBox.vgrow="ALWAYS">
+               <content>
+                  <AnchorPane fx:id="nodeContainer" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="5000.0" prefWidth="5000.0" />
+               </content>
+            </ScrollPane>
+         </children>
+      </VBox>
+      <ScrollPane fitToHeight="true" fitToWidth="true">
+         <content>
+            <ImageView fx:id="globalOutputImageView" fitHeight="50.0" fitWidth="100.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" />
+         </content>
+      </ScrollPane>
+   </items>
+</fx:root>

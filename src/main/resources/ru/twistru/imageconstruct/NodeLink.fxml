@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+
+<fx:root fx:id="mainLayout" type="AnchorPane" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <VBox alignment="CENTER">
+            <children>
+                <Label fx:id="nodeLinkName" text="Nameadasdasd" />
+                <Circle fx:id="circleItem" centerX="3.5" centerY="3.5" fill="DODGERBLUE" radius="7.0" stroke="BLACK" strokeType="INSIDE" />
+            </children>
+        </VBox>
+    </children>
+</fx:root>
