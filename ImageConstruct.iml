@@ -28,7 +28,6 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="opencv-455" level="application" />
     <orderEntry type="library" name="Maven: org.openjfx:javafx-controls:17.0.1" level="project" />
     <orderEntry type="library" name="Maven: org.openjfx:javafx-controls:win:17.0.1" level="project" />
     <orderEntry type="library" name="Maven: org.openjfx:javafx-fxml:17.0.1" level="project" />
@@ -61,5 +60,6 @@
     <orderEntry type="library" name="Maven: org.openjfx:javafx-graphics:win:17.0.1" level="project" />
     <orderEntry type="library" name="Maven: org.openjfx:javafx-base:17.0.1" level="project" />
     <orderEntry type="library" name="Maven: org.openjfx:javafx-base:win:17.0.1" level="project" />
+    <orderEntry type="library" name="Maven: org.openpnp:opencv:4.5.1-2" level="project" />
   </component>
 </module>

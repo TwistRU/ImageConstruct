@@ -15,6 +15,9 @@ class ImageConstructor : Application() {
 }
 
 fun main() {
-    System.loadLibrary(Core.NATIVE_LIBRARY_NAME)
+//    if using opencv installed locally
+//    System.loadLibrary(Core.NATIVE_LIBRARY_NAME)
+//    if using opencv installed via maven by openpnp
+    nu.pattern.OpenCV.loadLocally()
     Application.launch(ImageConstructor::class.java)
 }
