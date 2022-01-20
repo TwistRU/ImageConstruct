@@ -13,13 +13,14 @@ import javafx.scene.input.ClipboardContent
 import javafx.scene.input.TransferMode
 import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.Pane
+import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
 import javafx.scene.shape.CubicCurve
 import java.net.URL
 import java.util.*
 
-class NodeLinkController(private val mainParent: DraggableNodeController) : AnchorPane() {
+class NodeLinkController(val mainParent: DraggableNodeController) : VBox() {
     var linked: Boolean = false
     var state = ""
     var linkClass = IMAGEClass
@@ -33,7 +34,7 @@ class NodeLinkController(private val mainParent: DraggableNodeController) : Anch
     private var link: Link? = null
 
     @FXML
-    lateinit var mainLayout: AnchorPane
+    lateinit var mainLayout: VBox
 
     @FXML
     lateinit var nodeLinkName: Label
@@ -61,7 +62,7 @@ class NodeLinkController(private val mainParent: DraggableNodeController) : Anch
                 link = null
             }
             if (superParent == null) superParent = mainParent.parent as AnchorPane
-            tempLink.setLocalStartXY(getCircleCenterLocaleXY(mainLayout, circleItem))
+            tempLink.setLocalStartXY(getCircleCenterLocaleXY(this, circleItem))
             println("Link Drag Detected $superParent")
             superParent!!.children.add(tempLink)
             tempLink.setStart(
@@ -104,38 +105,7 @@ class NodeLinkController(private val mainParent: DraggableNodeController) : Anch
             dragEvent.consume()
         }
         circleItem.onDragDropped = EventHandler { dragEvent ->
-            if (superParent == null) {
-                superParent = mainParent.parent as AnchorPane
-            }
-            println("On link drag DROPPED")
-
-            val tmp = Link()
-            val sourceMainParent = (dragEvent.gestureSource as Node).parent.parent as NodeLinkController
-            this.sourceMainParent = sourceMainParent
-            if (state == INPUTState) {
-                linked = true
-                link = tmp
-                factory?.invoke(sourceMainParent)
-                sourceMainParent.linkedNodes.add(this)
-            }
-            if (sourceMainParent.state == INPUTState) {
-                sourceMainParent.sourceMainParent = this
-                sourceMainParent.factory?.invoke(this)
-                sourceMainParent.linked = true
-                sourceMainParent.link = tmp
-                this.linkedNodes.add(sourceMainParent)
-            }
-            tmp.setLocalStartXY(
-                getCircleCenterLocaleXY(
-                    sourceMainParent, dragEvent.gestureSource as Circle
-                )
-            )
-            tmp.setLocalEndXY(getCircleCenterLocaleXY(this, circleItem))
-            tmp.bindStartEnd(
-                sourceMainParent.mainParent, mainParent
-            )
-            superParent!!.children.add(tmp)
-
+            this.makeConnection(dragEvent.gestureSource as Circle)
             dragEvent.isDropCompleted = true
             dragEvent.consume()
         }
@@ -149,6 +119,54 @@ class NodeLinkController(private val mainParent: DraggableNodeController) : Anch
             superParent!!.children.remove(tempLink)
             dragEvent.consume()
         }
+    }
+
+    fun makeConnection(gestureSource: Circle) {
+        if (superParent == null) {
+            superParent = mainParent.parent as AnchorPane
+        }
+        println("On link drag DROPPED")
+
+        val tmp = Link()
+        val sourceMainParent = (gestureSource as Node).parent as NodeLinkController
+        if (this.state == OUTPUTState){
+            tmp.setLocalEndXY(getCircleCenterLocaleXY(sourceMainParent, gestureSource))
+            tmp.setLocalStartXY(getCircleCenterLocaleXY(this, circleItem))
+            tmp.bindStartEnd(
+                mainParent, sourceMainParent.mainParent
+            )
+        } else {
+            tmp.setLocalEndXY(getCircleCenterLocaleXY(this, circleItem))
+            tmp.setLocalStartXY(getCircleCenterLocaleXY(sourceMainParent, gestureSource))
+            tmp.bindStartEnd(
+                sourceMainParent.mainParent, mainParent
+            )
+        }
+        println("LINK MAKE $sourceMainParent")
+        this.sourceMainParent = sourceMainParent
+        if (state == INPUTState) {
+            linked = true
+            link = tmp
+            factory?.invoke(sourceMainParent)
+            sourceMainParent.linkedNodes.add(this)
+        }
+        if (sourceMainParent.state == INPUTState) {
+            sourceMainParent.sourceMainParent = this
+            sourceMainParent.factory?.invoke(this)
+            sourceMainParent.linked = true
+            sourceMainParent.link = tmp
+            this.linkedNodes.add(sourceMainParent)
+        }
+        println(
+            "CENTERS ${getCircleCenterLocaleXY(sourceMainParent, gestureSource)} ${
+                getCircleCenterLocaleXY(
+                    this,
+                    circleItem
+                )
+            }"
+        )
+        println("DA $sourceMainParent $gestureSource $this $circleItem")
+        superParent!!.children.add(tmp)
     }
 
     fun deleteAllNodes() {
@@ -166,7 +184,7 @@ class NodeLinkController(private val mainParent: DraggableNodeController) : Anch
             if (this.defactory !== null && this.sourceMainParent !== null) {
                 this.defactory?.invoke(this.sourceMainParent!!)
             }
-            if (this.sourceMainParent !== null){
+            if (this.sourceMainParent !== null) {
                 this.sourceMainParent!!.linkedNodes.remove(this)
             }
             if (this.link !== null) {
@@ -177,16 +195,16 @@ class NodeLinkController(private val mainParent: DraggableNodeController) : Anch
         }
     }
 
-    private fun getCircleCenterLocaleXY(mainLayout: Node, circleItem: Circle): Point2D {
-        return mainLayout.parent.parent.localToParent(
-            mainLayout.parent.localToParent(
-                mainLayout.localToParent(
-                    circleItem.parent.localToParent(
-                        circleItem.localToParent(circleItem.centerX, circleItem.centerY)
-                    )
-                )
+    fun getCircleCenterLocaleXY(mainLayout: NodeLinkController, circleItem: Circle): Point2D {
+        println("1 ${circleItem.localToParent(circleItem.centerX, circleItem.centerY)} ${circleItem.parent} ${circleItem.parent.layoutX} ${circleItem.parent.layoutY} ${mainLayout.width} ${mainLayout.height}")
+        println("2 ${mainLayout.localToParent(circleItem.localToParent(circleItem.centerX, circleItem.centerY))} ${mainLayout.parent}")
+        println("3 ${mainLayout.parent.localToParent(mainLayout.localToParent(circleItem.localToParent(circleItem.centerX, circleItem.centerY)))} ${mainLayout.parent.parent}")
+        return mainLayout.parent.localToParent(
+            mainLayout.localToParent(
+                circleItem.localToParent(circleItem.centerX, circleItem.centerY)
             )
         )
+
     }
 
     init {
@@ -249,11 +267,21 @@ class Link : CubicCurve() {
         endY = p.y
     }
 
-    fun bindStartEnd(source1: Node, source2: Node) {
+    fun bindStartEnd(source1: DraggableNodeController, source2: DraggableNodeController) {
         startXProperty().bind(Bindings.add(source1.layoutXProperty(), localStartX))
         startYProperty().bind(Bindings.add(source1.layoutYProperty(), localStartY))
         endXProperty().bind(Bindings.add(source2.layoutXProperty(), localEndX))
         endYProperty().bind(Bindings.add(source2.layoutYProperty(), localEndY))
+        source1.widthProperty().addListener { _, old, new ->
+            startXProperty().unbind()
+            this.localStartX += new.toDouble() - old.toDouble()
+            startXProperty().bind(Bindings.add(source1.layoutXProperty(), localStartX))
+        }
+        source1.heightProperty().addListener { _, old, new ->
+            startYProperty().unbind()
+            this.localStartY += new.toDouble() - old.toDouble()
+            startYProperty().bind(Bindings.add(source1.layoutYProperty(), localStartY))
+        }
     }
 
     init {

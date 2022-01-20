@@ -20,11 +20,21 @@ import org.opencv.core.Size
 import org.opencv.imgproc.Imgproc
 import java.awt.image.BufferedImage
 import java.awt.image.DataBufferByte
+import java.io.File
 import javax.imageio.ImageIO
 
 
 class FloatClass : DraggableNodeController() {
     private val output = TextField("0.0")
+
+    override fun toSerial(): String {
+        return "${super.toSerial()} ${this.output.text}"
+    }
+
+    override fun fromSerial(args: List<String>) {
+        super.fromSerial(args)
+        this.output.text = args[2]
+    }
 
     init {
         output.textProperty().addListener { _, oldValue, newValue ->
@@ -51,6 +61,15 @@ class FloatClass : DraggableNodeController() {
 class IntClass : DraggableNodeController() {
     private val output = TextField("0")
 
+    override fun toSerial(): String {
+        return "${super.toSerial()} ${this.output.text}"
+    }
+
+    override fun fromSerial(args: List<String>) {
+        super.fromSerial(args)
+        this.output.text = args[2]
+    }
+
     init {
         output.textProperty().addListener { _, oldValue, newValue ->
             try {
@@ -76,6 +95,15 @@ class IntClass : DraggableNodeController() {
 class StringClass : DraggableNodeController() {
     private val output = TextField("")
 
+    override fun toSerial(): String {
+        return "${super.toSerial()} ${this.output.text}"
+    }
+
+    override fun fromSerial(args: List<String>) {
+        super.fromSerial(args)
+        this.output.text = args[2]
+    }
+
     init {
         this.nodeContentVBox.children.remove(this.outputImageView)
         this.nodeName.text = "String"
@@ -93,14 +121,27 @@ class InputImage : DraggableNodeController() {
     private val fileButton = Button("Choose image")
     private var image: Image? = null
     private val link = NodeLinkController(this)
+    private var file: File? = null
+    override fun toSerial(): String {
+        return "${super.toSerial()} ${this.file.toString()}"
+    }
+
+    override fun fromSerial(args: List<String>) {
+        super.fromSerial(args)
+        if (args[2] != "null") {
+            this.image = toFXImage(ImageIO.read(File(args[2])), null)
+            this.file = File(args[2])
+        }
+        this.outputImageView.image = this.image
+    }
 
     init {
         this.nodeName.text = "Input Image"
         fileButton.onAction = EventHandler {
             val fileChooser = FileChooser()
             fileChooser.extensionFilters.add(FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg"))
-            val file = fileChooser.showOpenDialog(Stage())
-            image = toFXImage(ImageIO.read(file), null)
+            this.file = fileChooser.showOpenDialog(Stage())
+            image = toFXImage(ImageIO.read(this.file), null)
             if (image !== null) {
                 this.outputImageView.image = image
             }
@@ -164,8 +205,6 @@ class AddText : DraggableNodeController() {
     }
 
     init {
-        this.scaleX = 1.5
-        this.scaleY = 1.5
         // inputImage
         inputImage.factory = fun(source: NodeLinkController) {
             this.image = (source.outputNode as ImageView).image
@@ -273,8 +312,6 @@ class AddImage : DraggableNodeController() {
     }
 
     init {
-        this.scaleX = 1.5
-        this.scaleY = 1.5
         this.nodeName.text = "Add image"
         // inputImage
         inputImage.factory = fun(source: NodeLinkController) {
@@ -623,7 +660,6 @@ class BlurFilterClass : DraggableNodeController() {
         this.outputVBox.children.add(this.outputImage)
     }
 }
-
 
 class EndPointClass : DraggableNodeController() {
     private var image: Image? = null

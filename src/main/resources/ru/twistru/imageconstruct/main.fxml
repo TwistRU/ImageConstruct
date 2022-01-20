@@ -24,6 +24,8 @@
                         <Button fx:id="addImageButton" mnemonicParsing="false" text="Add image" />
                         <Button fx:id="brightnessButton" mnemonicParsing="false" text="Brightness" />
                         <Button fx:id="grayFilterButton" mnemonicParsing="false" text="Gray filter" />
+                        <Button fx:id="saveSchemeButton" mnemonicParsing="false" text="Save scheme" />
+                        <Button fx:id="loadSchemeButton" mnemonicParsing="false" text="Load scheme" />
                      </children>
                   </HBox>
                   <HBox>

@@ -9,13 +9,13 @@ import javafx.scene.control.Label
 import javafx.scene.image.ImageView
 import javafx.scene.input.ClipboardContent
 import javafx.scene.input.TransferMode
-import javafx.scene.layout.AnchorPane
+import javafx.scene.layout.BorderPane
 import javafx.scene.layout.Pane
 import javafx.scene.layout.VBox
 import java.net.URL
 import java.util.*
 
-open class DraggableNodeController : AnchorPane() {
+open class DraggableNodeController : BorderPane() {
     @FXML
     private lateinit var resources: ResourceBundle
 
@@ -35,7 +35,7 @@ open class DraggableNodeController : AnchorPane() {
     lateinit var inputVBox: VBox
 
     @FXML
-    private lateinit var mainLayout: AnchorPane
+    private lateinit var mainLayout: BorderPane
 
     @FXML
     lateinit var nodeContentVBox: VBox
@@ -77,29 +77,37 @@ open class DraggableNodeController : AnchorPane() {
             mainLayout.parent.onDragDropped = null
             dragEvent.consume()
         }
-        deleteNode.onAction = EventHandler { event ->
-            println("DELETE")
-            inputVBox.children.forEach { i ->
-                (i as NodeLinkController).deleteAllNodes()
-            }
-            outputVBox.children.forEach { i ->
-                (i as NodeLinkController).deleteAllNodes()
-            }
-            (this.parent as Pane).children.remove(this)
+        deleteNode.onAction = EventHandler {
+            this.deleteMyself()
         }
-//        for (i in 0 until 4) {
-//            val tmp = NodeLinkController(this)
-//            tmp.state = INPUTState
-//            inputVBox.children.add(tmp)
-//
-//        }
-//        for (i in 0 until 4) {
-//            val tmp = NodeLinkController(this)
-//            tmp.state = OUTPUTState
-//            outputVBox.children.add(tmp)
-//        }
-//        mainLayout.scaleX = 0.8
-//        mainLayout.scaleY = 0.8
+    }
+
+    public fun deleteMyself() {
+        println("DELETE")
+        inputVBox.children.forEach { i ->
+            (i as NodeLinkController).deleteAllNodes()
+        }
+        outputVBox.children.forEach { i ->
+            (i as NodeLinkController).deleteAllNodes()
+        }
+        (this.parent as Pane).children.remove(this)
+    }
+
+    private fun getSerialCoordinates(): String {
+        return "${this.layoutX} ${this.layoutY}"
+    }
+
+    fun getCallableClassName(): String {
+        return this.javaClass.simpleName
+    }
+
+    open fun toSerial(): String {
+        return this.getSerialCoordinates()
+    }
+
+    open fun fromSerial(args: List<String>) {
+        this.layoutX = args[0].toDouble()
+        this.layoutY = args[1].toDouble()
     }
 
     init {
